@@ -1,0 +1,6 @@
+spring:
+  application:
+    name: PubsApp
+
+server:
+  port: 8484
