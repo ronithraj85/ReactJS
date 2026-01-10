@@ -1,0 +1,17 @@
+
+https://youtu.be/LqT396DOUEE?si=D0UDV5D5yTA38zlY
+
+C:\kafka>
+
+.\bin\windows\kafka-storage.bat random-uuid --> generates an id
+
+.\bin\windows\kafka-storage.bat format -t <generatedId> -c .\config\kraft\server.properties  --> Formats metadata.
+
+
+.\bin\windows\kafka-server-start.bat  .\config\kraft\server.properties  --> it will start kafka server
+
+.\bin\windows\kafka-topics.bat --create --topic test --bootstrap-server localhost:9092 --partitions 1 --replication-factor 1   --> topic will be created.
+
+.\bin\windows\kafka-console-producer.bat --topic test --bootstrap-server localhost:9092
+
+.\bin\windows\kafka-console-consumer.bat --topic test --from-beinning --bootstrap-server localhost:9092
