@@ -4,19 +4,19 @@ import java.util.HashMap;
 
 class Solution{
     public int[] twoSumSolution(int t,int... arr){
-        HashMap hs = new HashMap();
-        int d=0,ind1=0,ind2=0;
+        HashMap<Integer, Integer> hMap = new HashMap<>();
+        int index1 = 0,index2=0;
         for(int i=0;i<arr.length;i++){
-            int n = t-arr[i];
-            if(hs.containsKey(n)){
-                ind1 = (int) hs.get(n);
-                ind2 = i;
+            if(hMap.containsKey(t-arr[i])){
+                index1= hMap.get(t-arr[i]);
+                index2=i;
             }
             else{
-                hs.put(arr[i],i);
+                hMap.put(arr[i],i);
             }
         }
-        return new int[]{ind1,ind2};    }
+        return new int[]{index1,index2};
+    }
 }
 
 public class TwoSum {
