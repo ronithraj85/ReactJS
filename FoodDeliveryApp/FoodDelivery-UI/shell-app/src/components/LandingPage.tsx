@@ -1,24 +1,26 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Navigate } from "react-router-dom";
 import { getUserRole } from "../utils/auth";
 
 export default function LandingPage() {
-  const navigate = useNavigate();
+  const role = getUserRole();
 
-  useEffect(() => {
-    const role = getUserRole();
-    if (role === "CUSTOMER") navigate("/profile");
-    else if (role === "OWNER") navigate("/restaurant");
-    else if (role === "ADMIN") navigate("/users");
-    else navigate("/login"); // fallback if no token
-  }, [navigate]);
+  if (role === "CUSTOMER") {
+    return <Navigate to="/customer-dashboard" replace />;
+  }
 
+  if (role === "OWNER") {
+    return <Navigate to="/owner-dashboard" replace />;
+  }
+
+  if (role === "ADMIN") {
+    return <Navigate to="/unauthorized" replace />;
+  }
+
+  // fallback if no role
   return (
     <div className="p-10 text-center">
-      <h1 className="text-4xl font-bold mb-6">Welcome to Food Delivery App</h1>
-      <p className="text-lg text-gray-700 mb-8">
-        Redirecting you to your dashboard...
-      </p>
+      <h1 className="text-3xl font-bold mb-4">Welcome</h1>
+      <p className="text-gray-600">Please log in to continue.</p>
     </div>
   );
 }

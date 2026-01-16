@@ -24,5 +24,10 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedSideEffectImports": true
   },
-  "include": ["src"]
+  "include": [
+    "src",
+    "../user-app/src/components/user/CustomerOrders.tsx",
+    "../user-app/src/components/user/CustomerDashboard.tsx",
+    "../restaurant-app/src/components/restaurant/OwnerDashboard.tsx"
+  ]
 }

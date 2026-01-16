@@ -6,14 +6,33 @@ export default function LoginPage() {
   const navigate = useNavigate();
 
   const handleLogin = (role: "CUSTOMER" | "OWNER" | "ADMIN") => {
-    const token = createMockJwt(role);
-    localStorage.setItem("token", token);
+    // Show loading toast
+    const loadingToast = toast.loading("Authenticating...");
 
-    toast.success(`Logged in as ${role}`, {
-      duration: 2000,
-    });
+    setTimeout(() => {
+      const token = createMockJwt(role);
+      localStorage.setItem("token", token);
 
-    navigate("/"); // triggers LandingPage redirect
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
+      // Role-specific success toast
+      if (role === "CUSTOMER") {
+        toast.success("🛒 Welcome back, Customer — your dashboard is ready!", {
+          style: { background: "#2563eb", color: "#fff" },
+        });
+      } else if (role === "OWNER") {
+        toast.success("🍴 Welcome, Owner — restaurant dashboard loaded!", {
+          style: { background: "#16a34a", color: "#fff" },
+        });
+      } else if (role === "ADMIN") {
+        toast.success("🔒 Admin logged in — system controls unlocked!", {
+          style: { background: "#7e22ce", color: "#fff" },
+        });
+      }
+
+      navigate("/");
+    }, 1000); // simulate short delay
   };
 
   return (

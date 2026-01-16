@@ -7,40 +7,44 @@ export default function Navbar() {
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    localStorage.removeItem("token");
-    toast.success("You have been logged out", {
-      duration: 2000,
-    });
-    navigate("/login");
+    // Show loading toast
+    const loadingToast = toast.loading("Logging out...");
+
+    setTimeout(() => {
+      localStorage.removeItem("token");
+
+      // Dismiss loading toast
+      toast.dismiss(loadingToast);
+
+      // Role-specific logout toast
+      if (role === "CUSTOMER") {
+        toast.success("🛒 Logged out — see you soon, Customer", {
+          style: { background: "#2563eb", color: "#fff" },
+        });
+      } else if (role === "OWNER") {
+        toast.success("🍴 Logged out — restaurant dashboard closed", {
+          style: { background: "#16a34a", color: "#fff" },
+        });
+      } else if (role === "ADMIN") {
+        toast.success("🔒 Admin logged out — system secured", {
+          style: { background: "#7e22ce", color: "#fff" },
+        });
+      } else {
+        toast.success("✅ Logged out successfully", {
+          style: { background: "#374151", color: "#fff" },
+        });
+      }
+
+      navigate("/login");
+    }, 1000); // simulate short delay
   };
 
   return (
-    <nav className="bg-gray-800 text-white p-4 flex justify-between">
-      <div className="flex space-x-4">
-        {role === "CUSTOMER" && (
-          <>
-            <Link to="/profile">Profile</Link>
-            <Link to="/orders">Orders</Link>
-          </>
-        )}
-        {role === "OWNER" && (
-          <>
-            <Link to="/restaurant">Restaurant</Link>
-            <Link to="/menu">Menu</Link>
-            <Link to="/dashboard">Dashboard</Link>
-          </>
-        )}
-        {role === "ADMIN" && <Link to="/users">Users</Link>}
-      </div>
-
-      {role && (
-        <button
-          onClick={handleLogout}
-          className="bg-red-600 px-3 py-1 rounded hover:bg-red-700"
-        >
-          Logout
-        </button>
-      )}
+    <nav className="flex flex-wrap gap-6 bg-gray-800 text-white p-4">
+      {/* links */}
+      <button onClick={handleLogout} className="hover:text-red-400 ml-auto">
+        Logout
+      </button>
     </nav>
   );
 }

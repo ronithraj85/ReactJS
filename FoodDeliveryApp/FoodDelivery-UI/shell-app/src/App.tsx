@@ -1,26 +1,40 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import ProtectedLayout from "./components/ProtectedLayout";
 import RoleRoute from "./components/RoleRoute";
 import LandingPage from "./components/LandingPage";
 import LoginPage from "./components/LoginPage";
-import ProtectedLayout from "./components/ProtectedLayout";
 
 // Remote imports
-import OrderDashboard from "../../restaurant-app/src/components/restaurant/OrderDashboard";
-import UserProfile from "../../user-app/src/components/user/UserProfile";
-import UsersTable from "../../user-app/src/components/user/UserTable";
+import CustomerDashboard from "../../user-app/src/components/user/CustomerDashboard";
+import CustomerOrders from "../../user-app/src/components/user/CustomerOrders";
+import UserProfile from "../../user-app/src/components/user//UserProfile";
+
+import OwnerDashboard from "../../restaurant-app/src/components/restaurant/OwnerDashboard";
+import RestaurantProfile from "../../restaurant-app/src/components/restaurant/RestaurantProfile";
+
 import OrderList from "../../order-app/src/components/order/OrderList";
 import OrderDetails from "../../order-app/src/components/order/OrderDetails";
-import RestaurantProfile from "../../restaurant-app/src/components/restaurant/RestaurantProfile";
-import MenuManager from "../../restaurant-app/src/components/restaurant/MenuManager";
+import Unauthorized from "./components/Unauthorized";
+import NotFound from "./components/NotFound";
+import { Toaster } from "react-hot-toast";
 
 export default function App() {
   return (
     <Router>
+      <Toaster
+        position="top-right"
+        reverseOrder={false}
+        toastOptions={{
+          duration: 1000, // 👈 auto-dismiss after 3 seconds
+        }}
+      />{" "}
+      {/* 👈 global toast container */}
+      <Routes>{/* routes */}</Routes>
       <Routes>
-        {/* Public routes */}
+        {/* Public */}
         <Route path="/login" element={<LoginPage />} />
 
-        {/* Protected routes */}
+        {/* Landing */}
         <Route
           path="/"
           element={
@@ -29,8 +43,28 @@ export default function App() {
             </ProtectedLayout>
           }
         />
+
+        {/* Customer */}
         <Route
-          path="/profile"
+          path="/customer-dashboard"
+          element={
+            <ProtectedLayout>
+              <CustomerDashboard />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/customer-dashboard/orders"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="CUSTOMER">
+                <CustomerOrders />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/customer-dashboard/profile"
           element={
             <ProtectedLayout>
               <RoleRoute role="CUSTOMER">
@@ -39,6 +73,28 @@ export default function App() {
             </ProtectedLayout>
           }
         />
+
+        {/* Owner */}
+        <Route
+          path="/owner-dashboard"
+          element={
+            <ProtectedLayout>
+              <OwnerDashboard />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/owner-dashboard/restaurant"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="OWNER">
+                <RestaurantProfile restaurantId={1} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+
+        {/* Orders */}
         <Route
           path="/orders"
           element={
@@ -49,6 +105,8 @@ export default function App() {
             </ProtectedLayout>
           }
         />
+        <Route path="*" element={<NotFound />} />
+        <Route path="/unauthorized" element={<Unauthorized />} />
         <Route
           path="/orders/:id"
           element={
@@ -60,54 +118,14 @@ export default function App() {
           }
         />
 
-        {/* Owner routes */}
-        <Route
-          path="/restaurant"
-          element={
-            <ProtectedLayout>
-              <RoleRoute role="OWNER">
-                <RestaurantProfile restaurantId={1} />
-              </RoleRoute>
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/menu"
-          element={
-            <ProtectedLayout>
-              <RoleRoute role="OWNER">
-                <MenuManager restaurantId={1} />
-              </RoleRoute>
-            </ProtectedLayout>
-          }
-        />
-        <Route
-          path="/dashboard"
-          element={
-            <ProtectedLayout>
-              <RoleRoute role="OWNER">
-                <OrderDashboard />
-              </RoleRoute>
-            </ProtectedLayout>
-          }
-        />
-
-        {/* Admin routes */}
-        <Route
-          path="/users"
-          element={
-            <ProtectedLayout>
-              <RoleRoute role="ADMIN">
-                <UsersTable />
-              </RoleRoute>
-            </ProtectedLayout>
-          }
-        />
-
         {/* Unauthorized */}
         <Route
           path="/unauthorized"
-          element={<p>You are not authorized to view this page.</p>}
+          element={
+            <p className="p-10 text-center">
+              You are not authorized to view this page.
+            </p>
+          }
         />
       </Routes>
     </Router>
