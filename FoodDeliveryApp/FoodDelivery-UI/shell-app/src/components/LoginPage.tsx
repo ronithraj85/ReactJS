@@ -27,7 +27,7 @@ export default function LoginPage() {
         });
       } else if (role === "ADMIN") {
         toast.success("🔒 Admin logged in — system controls unlocked!", {
-          style: { background: "#7e22ce", color: "#fff" },
+          style: { background: "#f88158", color: "#fff" },
         });
       }
 
