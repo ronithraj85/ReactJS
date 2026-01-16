@@ -1,35 +1,115 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import RoleRoute from "./components/RoleRoute";
+import LandingPage from "./components/LandingPage";
+import LoginPage from "./components/LoginPage";
+import ProtectedLayout from "./components/ProtectedLayout";
 
-function App() {
-  const [count, setCount] = useState(0)
+// Remote imports
+import OrderDashboard from "../../restaurant-app/src/components/restaurant/OrderDashboard";
+import UserProfile from "../../user-app/src/components/user/UserProfile";
+import UsersTable from "../../user-app/src/components/user/UserTable";
+import OrderList from "../../order-app/src/components/order/OrderList";
+import OrderDetails from "../../order-app/src/components/order/OrderDetails";
+import RestaurantProfile from "../../restaurant-app/src/components/restaurant/RestaurantProfile";
+import MenuManager from "../../restaurant-app/src/components/restaurant/MenuManager";
 
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.tsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <Router>
+      <Routes>
+        {/* Public routes */}
+        <Route path="/login" element={<LoginPage />} />
 
-export default App
+        {/* Protected routes */}
+        <Route
+          path="/"
+          element={
+            <ProtectedLayout>
+              <LandingPage />
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="CUSTOMER">
+                <UserProfile userId={1} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/orders"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="CUSTOMER">
+                <OrderList userId={1} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/orders/:id"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="CUSTOMER">
+                <OrderDetails orderId={101} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+
+        {/* Owner routes */}
+        <Route
+          path="/restaurant"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="OWNER">
+                <RestaurantProfile restaurantId={1} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/menu"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="OWNER">
+                <MenuManager restaurantId={1} />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+        <Route
+          path="/dashboard"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="OWNER">
+                <OrderDashboard />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+
+        {/* Admin routes */}
+        <Route
+          path="/users"
+          element={
+            <ProtectedLayout>
+              <RoleRoute role="ADMIN">
+                <UsersTable />
+              </RoleRoute>
+            </ProtectedLayout>
+          }
+        />
+
+        {/* Unauthorized */}
+        <Route
+          path="/unauthorized"
+          element={<p>You are not authorized to view this page.</p>}
+        />
+      </Routes>
+    </Router>
+  );
+}
