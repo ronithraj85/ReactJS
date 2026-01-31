@@ -9,7 +9,6 @@ public class ArrangeCoins {
     public static int arrangeCoins(int n) {
         int left = 0;
         int right = n;
-
         while (left <= right) {
             int mid = left + (right - left) / 2;
             long coinsNeeded = (long) mid * (mid + 1) / 2;
