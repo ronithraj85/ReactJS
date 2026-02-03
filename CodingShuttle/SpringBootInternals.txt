@@ -1,0 +1,85 @@
+1. JVM starts → main() executes
+
+2. SpringApplication.run(MyApp.class, args)
+
+3. @SpringBootApplication is detected
+   ├─ @SpringBootConfiguration (@Configuration)
+   ├─ @ComponentScan
+   └─ @EnableAutoConfiguration
+
+4. SpringApplication object is created
+   ├─ Determines application type (Servlet / Reactive)
+   ├─ Sets up Environment
+   ├─ Registers Listeners & Initializers
+
+5. ApplicationContext is CREATED
+   └─ IoC container is now ready
+   ❌ No beans are created yet
+
+6. ApplicationContext.refresh() is called
+   ├─ Component scan registers BeanDefinitions
+   ├─ Auto-configuration imports more BeanDefinitions
+   ├─ BeanFactoryPostProcessors execute
+   ├─ BeanPostProcessors are registered
+   ├─ Singleton beans are instantiated
+   ├─ Dependency injection happens
+   ├─ @PostConstruct / init callbacks run
+
+7. Embedded web server (Tomcat) is started
+
+8. CommandLineRunner / ApplicationRunner execute
+
+9. Application is READY to serve requests
+.......................................................................................
+JVM
+ |
+ v
+main()
+ |
+ v
+SpringApplication.run()
+ |
+ v
+ApplicationContext CREATED
+(IoC Container Ready)
+ |
+ |   ❌ No beans yet
+ |
+ v
+ApplicationContext.refresh()
+ |
+ +--> Load BeanDefinitions
+ |       (@ComponentScan, @Configuration,
+ |        AutoConfiguration)
+ |
+ +--> BeanFactoryPostProcessor
+ |       (MODIFIES BeanDefinitions)
+ |       ex: ConfigurationClassPostProcessor
+ |
+ +--> Register BeanPostProcessors
+ |
+ +--> Instantiate Singleton Beans
+ |       |
+ |       +--> BeanPostProcessor (before init)
+ |       |       ex: @Autowired
+ |       |
+ |       +--> @PostConstruct / init
+ |       |
+ |       +--> BeanPostProcessor (after init)
+ |               ex: AOP Proxy
+ |
+ v
+Embedded Server Started
+ |
+ v
+Application READY
+.......................................................................................
+
+“When a Spring Boot application starts, SpringApplication.run() creates the ApplicationContext, which itself is the IoC container.
+At this point, no beans are created.
+
+Then ApplicationContext.refresh() is called. During refresh, Spring loads bean definitions, executes BeanFactoryPostProcessors to modify metadata, registers BeanPostProcessors, and then instantiates singleton beans.
+
+During bean creation, dependencies are injected, lifecycle methods are called, and AOP proxies are applied.
+
+Finally, the embedded server starts and the application becomes ready to serve requests.”

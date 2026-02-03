@@ -1,0 +1,152 @@
+@SpringBootApplication is a meta-annotation that combines three critical Spring annotations to bootstrap a Spring Boot app.
+
+@SpringBootApplication
+public class MyApp {
+    public static void main(String[] args) {
+        SpringApplication.run(MyApp.class, args);
+    }
+}
+
+🔍 What does @SpringBootApplication contain internally?
+@SpringBootApplication
+=
+@SpringBootConfiguration
++ @EnableAutoConfiguration
++ @ComponentScan
+
+
+Let’s break each with internal behavior, not definitions.
+
+1️⃣ @SpringBootConfiguration
+@SpringBootConfiguration
+
+Internally:
+
+It is a specialized @Configuration
+
+Marks the class as a source of bean definitions
+
+Allows @Bean methods to be registered
+
+Why Spring Boot needs it:
+
+Boot uses this class as the primary configuration anchor
+
+It becomes the starting point for context setup
+
+📌 Think:
+
+“This is the root config class for the application.”
+
+2️⃣ @ComponentScan 🔍
+@ComponentScan
+
+Internally:
+
+Scans the package of the main class + subpackages
+
+Finds:
+
+@Component
+
+@Service
+
+@Repository
+
+@Controller
+
+Registers BeanDefinitions (not beans)
+
+Important interview clarification ⚠️
+
+❌ Does NOT create beans
+✅ Only registers metadata
+
+Actual bean creation happens during:
+
+ApplicationContext.refresh()
+
+
+📌 This is why package placement of the main class matters.
+
+3️⃣ @EnableAutoConfiguration ⚙️ (most important)
+@EnableAutoConfiguration
+
+What it does internally:
+
+Uses AutoConfigurationImportSelector
+
+Reads:
+
+META-INF/spring.factories
+META-INF/spring/org.springframework.boot.autoconfigure.AutoConfiguration.imports
+
+
+Loads hundreds of auto-config classes
+
+Each class is guarded by @Conditional annotations
+
+Example:
+
+@ConditionalOnClass(DataSource.class)
+@ConditionalOnMissingBean(DataSource.class)
+
+
+➡️ Means:
+
+If a class exists on classpath
+
+And no custom bean exists
+
+Then auto-create one
+
+📌 Classpath = configuration input in Spring Boot.
+
+🧩 How these 3 work together (internals flow)
+@SpringBootApplication
+        |
+        +--> Configuration source
+        |
+        +--> Component scanning
+        |       -> BeanDefinitions
+        |
+        +--> Auto-configuration
+                -> More BeanDefinitions
+
+
+Then later:
+
+ApplicationContext.refresh()
+        |
+        +--> BeanFactoryPostProcessors
+        |
+        +--> BeanPostProcessors
+        |
+        +--> Beans instantiated
+
+🎯 Interview-ready explanation (30 seconds)
+
+“@SpringBootApplication is a meta-annotation that combines @SpringBootConfiguration, @ComponentScan, and @EnableAutoConfiguration.
+
+It marks the main class as the primary configuration source, scans components in the base package, and enables auto-configuration by importing conditional configuration classes based on the classpath.
+
+These steps register bean definitions, and actual bean creation happens later during ApplicationContext.refresh().”
+
+🔥 One-liner (if interviewer rushes)
+
+“@SpringBootApplication sets up configuration, component scanning, and conditional auto-configuration — bean creation happens during context refresh.”
+
+⚠️ Common interview traps (avoid these)
+
+❌ “It creates all beans”
+❌ “Auto-config runs immediately”
+❌ “Component scan instantiates beans”
+
+✅ Correct mental model:
+
+@SpringBootApplication
+→ Registers BeanDefinitions
+→ refresh()
+→ Beans are created
+
+
